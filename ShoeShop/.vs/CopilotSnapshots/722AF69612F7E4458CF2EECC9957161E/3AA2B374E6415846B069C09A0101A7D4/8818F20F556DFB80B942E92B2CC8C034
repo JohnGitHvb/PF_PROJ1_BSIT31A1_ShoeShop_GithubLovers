@@ -1,0 +1,85 @@
+﻿@page
+@model ShoeShop.Pages.Admin.Shoes.CreateModel
+@{
+    ViewData["Title"] = "Add Shoe";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1 class="mb-4"><i class="fa fa-plus"></i> Add Shoe</h1>
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="mb-3">
+                <label asp-for="Shoe.Name" class="form-label"><i class="fa fa-tag"></i> Shoe Name</label>
+                <input asp-for="Shoe.Name" class="form-control" placeholder="e.g. Nike Air Max" />
+                <small class="form-text text-muted">Enter the full name of the shoe.</small>
+                <span asp-validation-for="Shoe.Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Shoe.Brand" class="form-label"><i class="fa fa-industry"></i> Brand</label>
+                <input asp-for="Shoe.Brand" class="form-control" placeholder="e.g. Nike" />
+                <small class="form-text text-muted">Brand or manufacturer.</small>
+                <span asp-validation-for="Shoe.Brand" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Shoe.Cost" class="form-label"><i class="fa fa-money-bill"></i> Cost</label>
+                <div class="input-group">
+                    <span class="input-group-text">₱</span>
+                    <input asp-for="Shoe.Cost" class="form-control" type="number" step="0.01" placeholder="e.g. 4000" />
+                </div>
+                <small class="form-text text-muted">Purchase cost per unit.</small>
+                <span asp-validation-for="Shoe.Cost" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Shoe.Price" class="form-label"><i class="fa fa-tag"></i> Price</label>
+                <div class="input-group">
+                    <span class="input-group-text">₱</span>
+                    <input asp-for="Shoe.Price" class="form-control" type="number" step="0.01" placeholder="e.g. 6500" />
+                </div>
+                <small class="form-text text-muted">Selling price per unit.</small>
+                <span asp-validation-for="Shoe.Price" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Shoe.Description" class="form-label"><i class="fa fa-info-circle"></i> Description</label>
+                <textarea asp-for="Shoe.Description" class="form-control" placeholder="Describe the shoe..." rows="3"></textarea>
+                <small class="form-text text-muted">Brief description and features.</small>
+                <span asp-validation-for="Shoe.Description" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Shoe.ImageUrl" class="form-label"><i class="fa fa-image"></i> Image URL</label>
+                <input asp-for="Shoe.ImageUrl" class="form-control" placeholder="Paste image URL here" />
+                <small class="form-text text-muted">Optional: Direct link to product image.</small>
+                <span asp-validation-for="Shoe.ImageUrl" class="text-danger"></span>
+                <div class="mt-2">
+                    <img id="shoeImagePreview" src="" alt="Image Preview" class="img-thumbnail d-none" style="max-height:120px;" />
+                </div>
+            </div>
+            <div class="form-check mb-3">
+                <input asp-for="Shoe.IsActive" class="form-check-input" />
+                <label asp-for="Shoe.IsActive" class="form-check-label">Active (show in inventory)</label>
+            </div>
+            <fieldset class="mb-3" disabled>
+                <legend class="fs-6">Color Variations (add after saving)</legend>
+                <input class="form-control mb-1" placeholder="e.g. Red, Blue, Black" disabled />
+            </fieldset>
+            <button type="submit" class="btn btn-success"><i class="fa fa-plus"></i> Add Shoe</button>
+            <a href="/admin/shoes" class="btn btn-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(function() {
+            $('input[name="Shoe.ImageUrl"]').on('input', function() {
+                var url = $(this).val();
+                var img = $('#shoeImagePreview');
+                if (url) {
+                    img.attr('src', url).removeClass('d-none');
+                } else {
+                    img.addClass('d-none');
+                }
+            });
+        });
+    </script>
+}
