@@ -1,0 +1,64 @@
+@page "{id:int}"
+@model ShoeShop.Pages.Admin.Shoes.DetailsModel
+@{
+    ViewData["Title"] = "Shoe Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1 class="mb-4"><i class="fa fa-eye"></i> Shoe Details</h1>
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="@Model.Shoe.ImageUrl" alt="Shoe Image" class="img-fluid rounded mb-3" style="max-height:200px;" />
+            </div>
+            <div class="col-md-8">
+                <dl class="row">
+                    <dt class="col-sm-4">Name</dt>
+                    <dd class="col-sm-8">@Model.Shoe.Name</dd>
+                    <dt class="col-sm-4">Brand</dt>
+                    <dd class="col-sm-8">@Model.Shoe.Brand</dd>
+                    <dt class="col-sm-4">Cost</dt>
+                    <dd class="col-sm-8">?@Model.Shoe.Cost.ToString("N2")</dd>
+                    <dt class="col-sm-4">Price</dt>
+                    <dd class="col-sm-8">?@Model.Shoe.Price.ToString("N2")</dd>
+                    <dt class="col-sm-4">Description</dt>
+                    <dd class="col-sm-8">@Model.Shoe.Description</dd>
+                    <dt class="col-sm-4">Active</dt>
+                    <dd class="col-sm-8">@(Model.Shoe.IsActive ? "Yes" : "No")</dd>
+                    <dt class="col-sm-4">Created</dt>
+                    <dd class="col-sm-8">@Model.Shoe.CreatedDate.ToShortDateString()</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+@if (Model.Shoe.ColorVariations != null && Model.Shoe.ColorVariations.Any())
+{
+    <div class="card">
+        <div class="card-header">Color Variations</div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Color</th>
+                        <th>Stock</th>
+                        <th>Reorder Level</th>
+                        <th>Active</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var cv in Model.Shoe.ColorVariations)
+                {
+                    <tr>
+                        <td><span style="background:@cv.HexCode;" class="px-2 py-1 border rounded me-2"></span>@cv.ColorName</td>
+                        <td>@cv.StockQuantity</td>
+                        <td>@cv.ReorderLevel</td>
+                        <td>@(cv.IsActive ? "Yes" : "No")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<a href="/admin/shoes" class="btn btn-secondary mt-3">Back to List</a>

@@ -1,0 +1,25 @@
+﻿@page
+@model ShoeShop.Pages.Admin.Shoes.LowStockModel
+@{
+    ViewData["Title"] = "Low Stock";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container-fluid">
+    <h2 class="mb-4"><i class="fa fa-exclamation-triangle text-warning me-2"></i> Low Stock Shoes</h2>
+    <p class="text-muted">Here are the shoes that are running low on inventory.</p>
+
+    <!-- Replace with actual data -->
+    <table class="table table-bordered table-hover">
+        <thead class="table-warning">
+            <tr>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Nike</td><td>Air Zoom</td><td>2</td></tr>
+            <tr><td>Adidas</td><td>Ultraboost</td><td>1</td></tr>
+        </tbody>
+    </table>
+</div>

@@ -1,50 +1,22 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\",
+  "WorkspaceRootPath": "C:\\Users\\admin\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\sheng\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\shoeshop\\entities\\supplier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:shoeshop\\entities\\supplier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\admin\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\pages\\admin\\shoes\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:pages\\admin\\shoes\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\sheng\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\shoeshop\\entities\\purchaseorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:shoeshop\\entities\\purchaseorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\admin\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\sheng\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\shoeshop\\entities\\shoecolorvariation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:shoeshop\\entities\\shoecolorvariation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\sheng\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\admin\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\sheng\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\sheng\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\shoeshop\\entities\\shoe.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:shoeshop\\entities\\shoe.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\sheng\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\shoeshop\\entities\\purchaseorderitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:shoeshop\\entities\\purchaseorderitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\sheng\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\shoeshop\\entities\\stockpullout.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:shoeshop\\entities\\stockpullout.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\sheng\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\shoeshop\\data\\shoeshopdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:shoeshop\\data\\shoeshopdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\sheng\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\shoeshop.repository.console\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:shoeshop.repository.console\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\sheng\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\shoeshop.repository.console\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:shoeshop.repository.console\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|c:\\users\\admin\\source\\repos\\pf_proj1_bsit31a1_shoeshop_githublovers\\shoeshop\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6F28F4C3-1AD3-403B-9EB9-FE09160DEFB7}|ShoeShop.csproj|solutionrelative:controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -54,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -74,138 +46,54 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "SeedData.cs",
-              "DocumentMoniker": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop.Repository.Console\\SeedData.cs",
-              "RelativeDocumentMoniker": "ShoeShop.Repository.Console\\SeedData.cs",
-              "ToolTip": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop.Repository.Console\\SeedData.cs",
-              "RelativeToolTip": "ShoeShop.Repository.Console\\SeedData.cs",
-              "ViewState": "AgIAAHMAAAAAAAAAAIBZwHgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T08:48:43.747Z",
+              "DocumentIndex": 0,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\Pages\\Admin\\Shoes\\Create.cshtml",
+              "RelativeDocumentMoniker": "Pages\\Admin\\Shoes\\Create.cshtml",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\Pages\\Admin\\Shoes\\Create.cshtml",
+              "RelativeToolTip": "Pages\\Admin\\Shoes\\Create.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-03T23:16:58.829Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop.Repository.Console\\Program.cs",
-              "RelativeDocumentMoniker": "ShoeShop.Repository.Console\\Program.cs",
-              "ToolTip": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop.Repository.Console\\Program.cs",
-              "RelativeToolTip": "ShoeShop.Repository.Console\\Program.cs",
-              "ViewState": "AgIAAD4AAAAAAAAAAABRwEEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T08:48:38.891Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "ShoeShopDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Data\\ShoeShopDbContext.cs",
-              "RelativeDocumentMoniker": "ShoeShop\\Data\\ShoeShopDbContext.cs",
-              "ToolTip": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Data\\ShoeShopDbContext.cs",
-              "RelativeToolTip": "ShoeShop\\Data\\ShoeShopDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T08:48:08.349Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "StockPullOut.cs",
-              "DocumentMoniker": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\StockPullOut.cs",
-              "RelativeDocumentMoniker": "ShoeShop\\Entities\\StockPullOut.cs",
-              "ToolTip": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\StockPullOut.cs",
-              "RelativeToolTip": "ShoeShop\\Entities\\StockPullOut.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T08:48:01.958Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "PurchaseOrderItem.cs",
-              "DocumentMoniker": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\PurchaseOrderItem.cs",
-              "RelativeDocumentMoniker": "ShoeShop\\Entities\\PurchaseOrderItem.cs",
-              "ToolTip": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\PurchaseOrderItem.cs",
-              "RelativeToolTip": "ShoeShop\\Entities\\PurchaseOrderItem.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T08:47:56.704Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "PurchaseOrder.cs",
-              "DocumentMoniker": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\PurchaseOrder.cs",
-              "RelativeDocumentMoniker": "ShoeShop\\Entities\\PurchaseOrder.cs",
-              "ToolTip": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\PurchaseOrder.cs",
-              "RelativeToolTip": "ShoeShop\\Entities\\PurchaseOrder.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T08:47:51.176Z"
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-03T23:16:42.389Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Supplier.cs",
-              "DocumentMoniker": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\Supplier.cs",
-              "RelativeDocumentMoniker": "ShoeShop\\Entities\\Supplier.cs",
-              "ToolTip": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\Supplier.cs",
-              "RelativeToolTip": "ShoeShop\\Entities\\Supplier.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T08:47:48.3Z",
+              "WhenOpened": "2025-10-03T23:16:20.068Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "ShoeColorVariation.cs",
-              "DocumentMoniker": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\ShoeColorVariation.cs",
-              "RelativeDocumentMoniker": "ShoeShop\\Entities\\ShoeColorVariation.cs",
-              "ToolTip": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\ShoeColorVariation.cs",
-              "RelativeToolTip": "ShoeShop\\Entities\\ShoeColorVariation.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T08:47:45.932Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Shoe.cs",
-              "DocumentMoniker": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\Shoe.cs",
-              "RelativeDocumentMoniker": "ShoeShop\\Entities\\Shoe.cs",
-              "ToolTip": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop\\Entities\\Shoe.cs",
-              "RelativeToolTip": "ShoeShop\\Entities\\Shoe.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T08:47:43.144Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\appsettings.json",
-              "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\appsettings.json",
-              "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAwAAAAAAAAAAABBwA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-10-02T08:42:47.432Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\sheng\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\Program.cs",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAABwAAAAAAAAAAABRwB8AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABEAAAAAAAAAAAAowCAAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T05:02:11.029Z",
+              "WhenOpened": "2025-10-03T08:08:17.249Z",
               "EditorCaption": ""
             }
           ]

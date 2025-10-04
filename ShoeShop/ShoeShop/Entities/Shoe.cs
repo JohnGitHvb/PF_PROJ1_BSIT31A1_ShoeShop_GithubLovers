@@ -16,8 +16,10 @@ namespace ShoeShop.Entities
         [MaxLength(50)]
         public string Brand { get; set; }
         [Column(TypeName = "decimal(18,2)")]
+        [DataType(DataType.Currency)]
         public decimal Cost { get; set; }
         [Column(TypeName = "decimal(18,2)")]
+        [DataType(DataType.Currency)]
         public decimal Price { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
