@@ -1,0 +1,259 @@
+﻿@model ShoeShop.Services.DTOs.PurchaseOrderDto
+@{
+    ViewData["Title"] = "Purchase Order Details";
+    var canReceive = Model.Status == ShoeShop.Repository.Entities.OrderStatus.Shipped ||
+                     Model.Status == ShoeShop.Repository.Entities.OrderStatus.Confirmed;
+    var canUpdateStatus = Model.Status != ShoeShop.Repository.Entities.OrderStatus.Received &&
+                          Model.Status != ShoeShop.Repository.Entities.OrderStatus.Cancelled;
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2><i class="fas fa-file-invoice"></i> Purchase Order Details</h2>
+        <p>Order #@Model.OrderNumber</p>
+    </div>
+    <div>
+        @{
+            var statusClass = Model.Status.ToString() switch
+            {
+                "Pending" => "bg-warning",
+                "Confirmed" => "bg-info",
+                "Shipped" => "bg-primary",
+                "Received" => "bg-success",
+                "Cancelled" => "bg-danger",
+                _ => "bg-secondary"
+            };
+        }
+        <h3><span class="badge @statusClass">@Model.StatusDisplay</span></h3>
+    </div>
+</div>
+
+<!-- Success/Error Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row">
+    <!-- Order Information -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Order Information</h5>
+            </div>
+            <div class="card-body">
+                <dl class="mb-0">
+                    <dt>Order Number:</dt>
+                    <dd><strong>@Model.OrderNumber</strong></dd>
+
+                    <dt>Supplier:</dt>
+                    <dd>@Model.SupplierName</dd>
+
+                    <dt>Order Date:</dt>
+                    <dd>@Model.OrderDate.ToString("MMMM dd, yyyy")</dd>
+
+                    <dt>Expected Date:</dt>
+                    <dd>
+                        @if (Model.ExpectedDate.HasValue)
+                        {
+                            @Model.ExpectedDate.Value.ToString("MMMM dd, yyyy")
+                        }
+                        else
+                        {
+                            <span class="text-muted">Not specified</span>
+                        }
+                    </dd>
+
+                    <dt>Status:</dt>
+                    <dd><span class="badge @statusClass">@Model.StatusDisplay</span></dd>
+
+                    <dt>Total Amount:</dt>
+                    <dd><h4 class="text-primary mb-0">$@Model.TotalAmount.ToString("N2")</h4></dd>
+                </dl>
+
+                <hr />
+
+                <!-- Action Buttons -->
+                @if (canUpdateStatus)
+                {
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Update Status:</strong></label>
+                        @if (Model.Status == ShoeShop.Repository.Entities.OrderStatus.Pending)
+                        {
+                            <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post" class="d-inline">
+                                <input type="hidden" name="status" value="Confirmed" />
+                                <button type="submit" class="btn btn-info btn-sm w-100 mb-2">
+                                    <i class="fas fa-check"></i> Confirm Order
+                                </button>
+                            </form>
+                        }
+                        @if (Model.Status == ShoeShop.Repository.Entities.OrderStatus.Confirmed)
+                        {
+                            <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post" class="d-inline">
+                                <input type="hidden" name="status" value="Shipped" />
+                                <button type="submit" class="btn btn-primary btn-sm w-100 mb-2">
+                                    <i class="fas fa-shipping-fast"></i> Mark as Shipped
+                                </button>
+                            </form>
+                        }
+                        @if (canReceive)
+                        {
+                            <form asp-action="ReceiveOrder" asp-route-id="@Model.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-success btn-sm w-100 mb-2" onclick="return confirm('Are you sure you want to receive this entire order? This will update stock levels.')">
+                                    <i class="fas fa-box-open"></i> Receive Entire Order
+                                </button>
+                            </form>
+                        }
+                    </div>
+                }
+
+                <a asp-action="Index" class="btn btn-secondary w-100">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="col-lg-8 mb-4">
+        <div class="card table-custom">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                <h5 class="mb-0"><i class="fas fa-box"></i> Order Items (@Model.OrderItems.Count)</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Shoe</th>
+                            <th>Color</th>
+                            <th>Quantity Ordered</th>
+                            <th>Quantity Received</th>
+                            <th>Unit Cost</th>
+                            <th>Total Cost</th>
+                            @if (canReceive)
+                            {
+                                <th>Action</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            var fullyReceived = item.QuantityReceived == item.QuantityOrdered;
+                            var partiallyReceived = item.QuantityReceived > 0 && item.QuantityReceived < item.QuantityOrdered;
+
+                            <tr class="@(fullyReceived ? "table-success" : partiallyReceived ? "table-warning" : "")">
+                                <td><strong>@item.ShoeName</strong></td>
+                                <td>
+                                    <span class="badge badge-custom" style="background-color: #6c757d; color: white;">
+                                        @item.ColorName
+                                    </span>
+                                </td>
+                                <td>@item.QuantityOrdered</td>
+                                <td>
+                                    @if (fullyReceived)
+                                    {
+                                        <span class="badge bg-success">@item.QuantityReceived <i class="fas fa-check"></i></span>
+                                    }
+                                    else if (partiallyReceived)
+                                    {
+                                        <span class="badge bg-warning">@item.QuantityReceived</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@item.QuantityReceived</span>
+                                    }
+                                </td>
+                                <td>$@item.UnitCost.ToString("N2")</td>
+                                <td><strong>$@item.TotalCost.ToString("N2")</strong></td>
+                                @if (canReceive && !fullyReceived)
+                                {
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#receiveModal@(item.Id)">
+                                            <i class="fas fa-box-open"></i> Receive
+                                        </button>
+
+                                        <!-- Receive Item Modal -->
+                                        <div class="modal fade" id="receiveModal@(item.Id)" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Receive Item</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <form asp-action="ReceiveItem" method="post">
+                                                        <div class="modal-body">
+                                                            <input type="hidden" name="itemId" value="@item.Id" />
+                                                            <input type="hidden" name="orderId" value="@Model.Id" />
+
+                                                            <p><strong>Shoe:</strong> @item.ShoeName - @item.ColorName</p>
+                                                            <p><strong>Ordered:</strong> @item.QuantityOrdered</p>
+                                                            <p><strong>Already Received:</strong> @item.QuantityReceived</p>
+
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Quantity to Receive *</label>
+                                                                <input type="number" name="quantityReceived" class="form-control"
+                                                                       min="@item.QuantityReceived" max="@item.QuantityOrdered"
+                                                                       value="@item.QuantityOrdered" required />
+                                                                <small class="text-muted">Remaining: @(item.QuantityOrdered - item.QuantityReceived)</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                            <button type="submit" class="btn btn-success">
+                                                                <i class="fas fa-check"></i> Confirm Receipt
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <th colspan="5" class="text-end">Total:</th>
+                            <th colspan="@(canReceive ? "2" : "1")">
+                                <h5 class="mb-0 text-primary">$@Model.TotalAmount.ToString("N2")</h5>
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Progress Card -->
+        @if (Model.Status != ShoeShop.Repository.Entities.OrderStatus.Cancelled)
+        {
+            var totalOrdered = Model.OrderItems.Sum(i => i.QuantityOrdered);
+            var totalReceived = Model.OrderItems.Sum(i => i.QuantityReceived);
+            var progressPercentage = totalOrdered > 0 ? (totalReceived * 100.0 / totalOrdered) : 0;
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6>Receiving Progress</h6>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar @(progressPercentage == 100 ? "bg-success" : "bg-info")"
+                             role="progressbar"
+                             style="width: @progressPercentage%">
+                            @progressPercentage.ToString("F0")% Complete (@totalReceived / @totalOrdered items)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

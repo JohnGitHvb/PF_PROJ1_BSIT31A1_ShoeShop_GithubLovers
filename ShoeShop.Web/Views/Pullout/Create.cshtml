@@ -1,0 +1,137 @@
+﻿@model ShoeShop.Services.DTOs.CreateStockPullOutDto
+@{
+    ViewData["Title"] = "Create Pull-Out Request";
+    var colorVariations = ViewBag.ColorVariations as List<ShoeShop.Services.DTOs.ShoeColorVariationDto>;
+}
+
+<div class="page-header">
+    <h2><i class="fas fa-plus"></i> Create Pull-Out Request</h2>
+    <p>Request to remove items from inventory</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <!-- Item Selection -->
+                    <div class="mb-3">
+                        <label asp-for="ShoeColorVariationId" class="form-label">Select Item *</label>
+                        <select asp-for="ShoeColorVariationId" class="form-select" id="itemSelect" onchange="updateStockInfo()">
+                            <option value="">-- Select Shoe and Color --</option>
+                            @if (colorVariations != null)
+                            {
+                                @foreach (var cv in colorVariations.OrderBy(cv => cv.ShoeName))
+                                {
+                                    <option value="@cv.Id"
+                                            data-stock="@cv.StockQuantity"
+                                            data-shoe="@cv.ShoeName"
+                                            data-color="@cv.ColorName"
+                                            data-brand="@cv.Brand">
+                                        @cv.ShoeName - @cv.ColorName (@cv.Brand) - Stock: @cv.StockQuantity
+                                    </option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="ShoeColorVariationId" class="text-danger"></span>
+                    </div>
+
+                    <!-- Stock Info Display -->
+                    <div id="stockInfo" class="alert alert-info" style="display: none;">
+                        <strong>Current Stock:</strong> <span id="currentStock">0</span> units available
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="mb-3">
+                        <label asp-for="Quantity" class="form-label">Quantity to Remove *</label>
+                        <input asp-for="Quantity" type="number" class="form-control" min="1" placeholder="Enter quantity" />
+                        <span asp-validation-for="Quantity" class="text-danger"></span>
+                    </div>
+
+                    <!-- Reason -->
+                    <div class="mb-3">
+                        <label asp-for="Reason" class="form-label">Reason for Pull-Out *</label>
+                        <select asp-for="Reason" class="form-select" id="reasonSelect">
+                            <option value="">-- Select Reason --</option>
+                            <option value="Damaged">Damaged Goods</option>
+                            <option value="Customer Return">Customer Return</option>
+                            <option value="Promotional">Promotional Use</option>
+                            <option value="Quality Issue">Quality Control Issue</option>
+                            <option value="Theft/Loss">Theft or Loss</option>
+                            <option value="Display">Display/Sample</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span asp-validation-for="Reason" class="text-danger"></span>
+                    </div>
+
+                    <!-- Reason Details -->
+                    <div class="mb-3">
+                        <label asp-for="ReasonDetails" class="form-label">Additional Details</label>
+                        <textarea asp-for="ReasonDetails" class="form-control" rows="4" placeholder="Provide additional information about this pull-out..."></textarea>
+                        <span asp-validation-for="ReasonDetails" class="text-danger"></span>
+                        <small class="text-muted">Optional: Provide more details about why these items are being removed</small>
+                    </div>
+
+                    <!-- Requested By -->
+                    <div class="mb-3">
+                        <label asp-for="RequestedBy" class="form-label">Requested By *</label>
+                        <input asp-for="RequestedBy" class="form-control" placeholder="Your name" />
+                        <span asp-validation-for="RequestedBy" class="text-danger"></span>
+                    </div>
+
+                    <!-- Important Notice -->
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Important:</strong> This request requires manager approval. Stock will only be deducted after approval and completion.
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-custom">
+                            <i class="fas fa-paper-plane"></i> Submit Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function updateStockInfo() {
+            const select = document.getElementById('itemSelect');
+            const stockInfo = document.getElementById('stockInfo');
+            const currentStock = document.getElementById('currentStock');
+            const selectedOption = select.options[select.selectedIndex];
+
+            if (selectedOption.value) {
+                const stock = selectedOption.getAttribute('data-stock');
+                currentStock.textContent = stock;
+                stockInfo.style.display = 'block';
+
+                // Update quantity max
+                const quantityInput = document.querySelector('input[name="Quantity"]');
+                quantityInput.max = stock;
+
+                // Warn if low stock
+                if (parseInt(stock) <= 5) {
+                    stockInfo.className = 'alert alert-danger';
+                    stockInfo.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>Warning:</strong> Low stock! Only <span id="currentStock">' + stock + '</span> units available';
+                } else {
+                    stockInfo.className = 'alert alert-info';
+                    stockInfo.innerHTML = '<strong>Current Stock:</strong> <span id="currentStock">' + stock + '</span> units available';
+                }
+            } else {
+                stockInfo.style.display = 'none';
+            }
+        }
+    </script>
+}

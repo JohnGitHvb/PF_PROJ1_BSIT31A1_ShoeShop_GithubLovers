@@ -1,0 +1,182 @@
+﻿@model List<ShoeShop.Services.DTOs.PurchaseOrderDto>
+@{
+    ViewData["Title"] = "Purchase Orders";
+    var currentStatus = ViewBag.CurrentStatus as string;
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2><i class="fas fa-shopping-cart"></i> Purchase Orders</h2>
+        <p>Manage purchase orders and stock replenishment</p>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary btn-custom">
+            <i class="fas fa-plus"></i> Create New Order
+        </a>
+    </div>
+</div>
+
+<!-- Success/Error Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card warning">
+            <div class="icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3>@Model.Count(o => o.Status == ShoeShop.Repository.Entities.OrderStatus.Pending)</h3>
+            <p class="text-muted mb-0">Pending Orders</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card primary">
+            <div class="icon">
+                <i class="fas fa-shipping-fast"></i>
+            </div>
+            <h3>@Model.Count(o => o.Status == ShoeShop.Repository.Entities.OrderStatus.Shipped)</h3>
+            <p class="text-muted mb-0">Shipped Orders</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card success">
+            <div class="icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>@Model.Count(o => o.Status == ShoeShop.Repository.Entities.OrderStatus.Received)</h3>
+            <p class="text-muted mb-0">Received Orders</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card danger">
+            <div class="icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <h3>$@Model.Sum(o => o.TotalAmount).ToString("N2")</h3>
+            <p class="text-muted mb-0">Total Order Value</p>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Buttons -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="btn-group" role="group">
+            <a asp-action="Index" class="btn @(string.IsNullOrEmpty(currentStatus) ? "btn-primary" : "btn-outline-primary")">
+                All Orders (@Model.Count)
+            </a>
+            <a asp-action="Index" asp-route-status="Pending" class="btn @(currentStatus == "Pending" ? "btn-warning" : "btn-outline-warning")">
+                Pending (@Model.Count(o => o.Status == ShoeShop.Repository.Entities.OrderStatus.Pending))
+            </a>
+            <a asp-action="Index" asp-route-status="Confirmed" class="btn @(currentStatus == "Confirmed" ? "btn-info" : "btn-outline-info")">
+                Confirmed (@Model.Count(o => o.Status == ShoeShop.Repository.Entities.OrderStatus.Confirmed))
+            </a>
+            <a asp-action="Index" asp-route-status="Shipped" class="btn @(currentStatus == "Shipped" ? "btn-primary" : "btn-outline-primary")">
+                Shipped (@Model.Count(o => o.Status == ShoeShop.Repository.Entities.OrderStatus.Shipped))
+            </a>
+            <a asp-action="Index" asp-route-status="Received" class="btn @(currentStatus == "Received" ? "btn-success" : "btn-outline-success")">
+                Received (@Model.Count(o => o.Status == ShoeShop.Repository.Entities.OrderStatus.Received))
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Orders Table -->
+<div class="card table-custom">
+    <div class="card-header" style="background-color: var(--primary-color); color: white;">
+        <h5 class="mb-0"><i class="fas fa-list"></i> Purchase Orders (@Model.Count)</h5>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.Any())
+        {
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Supplier</th>
+                        <th>Order Date</th>
+                        <th>Expected Date</th>
+                        <th>Items</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        var statusClass = order.Status.ToString() switch
+                        {
+                            "Pending" => "bg-warning",
+                            "Confirmed" => "bg-info",
+                            "Shipped" => "bg-primary",
+                            "Received" => "bg-success",
+                            "Cancelled" => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+
+                        <tr>
+                            <td><strong>@order.OrderNumber</strong></td>
+                            <td>@order.SupplierName</td>
+                            <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                @if (order.ExpectedDate.HasValue)
+                                {
+                                    @order.ExpectedDate.Value.ToString("MMM dd, yyyy")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">@order.OrderItems.Count items</span>
+                            </td>
+                            <td><strong>$@order.TotalAmount.ToString("N2")</strong></td>
+                            <td>
+                                <span class="badge @statusClass">@order.StatusDisplay</span>
+                            </td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                @if (order.Status == ShoeShop.Repository.Entities.OrderStatus.Pending)
+                                {
+                                    <form asp-action="Cancel" asp-route-id="@order.Id" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to cancel this order?')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="p-5 text-center text-muted">
+                <i class="fas fa-inbox fa-3x mb-3"></i>
+                <p>No purchase orders found</p>
+                <a asp-action="Create" class="btn btn-primary btn-custom">
+                    <i class="fas fa-plus"></i> Create Your First Order
+                </a>
+            </div>
+        }
+    </div>
+</div>
