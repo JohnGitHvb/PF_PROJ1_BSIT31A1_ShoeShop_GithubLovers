@@ -1,0 +1,269 @@
+﻿@model ShoeShop.Web.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Reports & Analytics";
+}
+
+<div class="page-header">
+    <h2><i class="fas fa-chart-bar"></i> Reports & Analytics</h2>
+    <p>Comprehensive inventory and transaction reports</p>
+</div>
+
+<!-- Summary Statistics -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card primary">
+            <div class="icon">
+                <i class="fas fa-shoe-prints"></i>
+            </div>
+            <h3>@Model.TotalShoes</h3>
+            <p class="text-muted mb-0">Total Shoe Models</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card success">
+            <div class="icon">
+                <i class="fas fa-boxes"></i>
+            </div>
+            <h3>@Model.TotalStock</h3>
+            <p class="text-muted mb-0">Total Stock Units</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card warning">
+            <div class="icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <h3>$@Model.TotalInventoryValue.ToString("N2")</h3>
+            <p class="text-muted mb-0">Inventory Value</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card danger">
+            <div class="icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>@Model.LowStockCount</h3>
+            <p class="text-muted mb-0">Low Stock Alerts</p>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Report -->
+<div class="card table-custom mb-4">
+    <div class="card-header" style="background-color: var(--primary-color); color: white;">
+        <h5 class="mb-0"><i class="fas fa-warehouse"></i> Inventory Status Report</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Stock Overview</h6>
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Total Shoe Models
+                        <span class="badge bg-primary rounded-pill">@Model.TotalShoes</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Total Stock Units
+                        <span class="badge bg-success rounded-pill">@Model.TotalStock</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Low Stock Items
+                        <span class="badge bg-danger rounded-pill">@Model.LowStockCount</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h6>Financial Summary</h6>
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Total Inventory Value
+                        <span class="badge bg-success rounded-pill">$@Model.TotalInventoryValue.ToString("N2")</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Average Value per Unit
+                        <span class="badge bg-info rounded-pill">
+                            $@((Model.TotalStock > 0 ? Model.TotalInventoryValue / Model.TotalStock : 0).ToString("N2"))
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Low Stock Report -->
+@if (Model.LowStockItems.Any())
+{
+    <div class="card table-custom mb-4">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Low Stock Alert Report</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="bg-danger">
+                    <tr>
+                        <th>Shoe</th>
+                        <th>Brand</th>
+                        <th>Color</th>
+                        <th>Current Stock</th>
+                        <th>Reorder Level</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LowStockItems)
+                    {
+                        <tr>
+                            <td><strong>@item.ShoeName</strong></td>
+                            <td>@item.Brand</td>
+                            <td>
+                                <span class="badge badge-custom" style="background-color: @item.HexCode; color: white;">
+                                    @item.ColorName
+                                </span>
+                            </td>
+                            <td><span class="badge bg-danger">@item.StockQuantity</span></td>
+                            <td>@item.ReorderLevel</td>
+                            <td>
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-arrow-down"></i> @(item.ReorderLevel - item.StockQuantity) below reorder level
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<!-- Transaction Reports -->
+<div class="row">
+    <!-- Purchase Orders Report -->
+    <div class="col-lg-6 mb-4">
+        <div class="card table-custom">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                <h5 class="mb-0"><i class="fas fa-shopping-cart"></i> Recent Purchase Orders</h5>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.RecentPurchaseOrders.Any())
+                {
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Supplier</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.RecentPurchaseOrders)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-controller="PurchaseOrder" asp-action="Details" asp-route-id="@order.Id">
+                                            @order.OrderNumber
+                                        </a>
+                                    </td>
+                                    <td>@order.SupplierName</td>
+                                    <td>$@order.TotalAmount.ToString("N2")</td>
+                                    <td>
+                                        @{
+                                            var statusClass = order.Status.ToString() switch
+                                            {
+                                                "Pending" => "bg-warning",
+                                                "Confirmed" => "bg-info",
+                                                "Shipped" => "bg-primary",
+                                                "Received" => "bg-success",
+                                                "Cancelled" => "bg-danger",
+                                                _ => "bg-secondary"
+                                            };
+                                        }
+                                        <span class="badge @statusClass">@order.StatusDisplay</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="p-4 text-center text-muted">No purchase orders</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Pull-Outs Report -->
+    <div class="col-lg-6 mb-4">
+        <div class="card table-custom">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                <h5 class="mb-0"><i class="fas fa-arrow-circle-down"></i> Recent Pull-Outs</h5>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.RecentPullOuts.Any())
+                {
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Shoe</th>
+                                <th>Quantity</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var pullOut in Model.RecentPullOuts)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-controller="PullOut" asp-action="Details" asp-route-id="@pullOut.Id">
+                                            @pullOut.ShoeName
+                                        </a>
+                                    </td>
+                                    <td>@pullOut.Quantity</td>
+                                    <td><small>@pullOut.Reason</small></td>
+                                    <td>
+                                        @{
+                                            var pullOutStatusClass = pullOut.Status.ToString() switch
+                                            {
+                                                "Pending" => "bg-warning",
+                                                "Approved" => "bg-info",
+                                                "Completed" => "bg-success",
+                                                "Rejected" => "bg-danger",
+                                                _ => "bg-secondary"
+                                            };
+                                        }
+                                        <span class="badge @pullOutStatusClass">@pullOut.StatusDisplay</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="p-4 text-center text-muted">No pull-out requests</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card">
+    <div class="card-body text-center">
+        <h5>Quick Actions</h5>
+        <div class="btn-group" role="group">
+            <a asp-controller="Inventory" asp-action="Index" class="btn btn-primary">
+                <i class="fas fa-boxes"></i> View Inventory
+            </a>
+            <a asp-controller="PurchaseOrder" asp-action="Create" class="btn btn-success">
+                <i class="fas fa-plus"></i> Create Purchase Order
+            </a>
+            <a asp-controller="PullOut" asp-action="Index" class="btn btn-warning">
+                <i class="fas fa-list"></i> View Pull-Outs
+            </a>
+        </div>
+    </div>
+</div>

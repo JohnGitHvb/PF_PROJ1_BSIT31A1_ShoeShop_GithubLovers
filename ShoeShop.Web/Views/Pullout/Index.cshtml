@@ -1,0 +1,174 @@
+﻿@model List<ShoeShop.Services.DTOs.StockPullOutDto>
+@{
+    ViewData["Title"] = "Stock Pull-Outs";
+    var currentStatus = ViewBag.CurrentStatus as string;
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2><i class="fas fa-arrow-circle-down"></i> Stock Pull-Out Management</h2>
+        <p>Manage inventory removal requests</p>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary btn-custom">
+            <i class="fas fa-plus"></i> Create Pull-Out Request
+        </a>
+    </div>
+</div>
+
+<!-- Success/Error Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card warning">
+            <div class="icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3>@Model.Count(p => p.Status == ShoeShop.Repository.Entities.PullOutStatus.Pending)</h3>
+            <p class="text-muted mb-0">Pending Requests</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card primary">
+            <div class="icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>@Model.Count(p => p.Status == ShoeShop.Repository.Entities.PullOutStatus.Approved)</h3>
+            <p class="text-muted mb-0">Approved</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card success">
+            <div class="icon">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <h3>@Model.Count(p => p.Status == ShoeShop.Repository.Entities.PullOutStatus.Completed)</h3>
+            <p class="text-muted mb-0">Completed</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card danger">
+            <div class="icon">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <h3>@Model.Count(p => p.Status == ShoeShop.Repository.Entities.PullOutStatus.Rejected)</h3>
+            <p class="text-muted mb-0">Rejected</p>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Buttons -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="btn-group" role="group">
+            <a asp-action="Index" class="btn @(string.IsNullOrEmpty(currentStatus) ? "btn-primary" : "btn-outline-primary")">
+                All Requests (@Model.Count)
+            </a>
+            <a asp-action="Index" asp-route-status="Pending" class="btn @(currentStatus == "Pending" ? "btn-warning" : "btn-outline-warning")">
+                Pending (@Model.Count(p => p.Status == ShoeShop.Repository.Entities.PullOutStatus.Pending))
+            </a>
+            <a asp-action="Index" asp-route-status="Approved" class="btn @(currentStatus == "Approved" ? "btn-info" : "btn-outline-info")">
+                Approved (@Model.Count(p => p.Status == ShoeShop.Repository.Entities.PullOutStatus.Approved))
+            </a>
+            <a asp-action="Index" asp-route-status="Completed" class="btn @(currentStatus == "Completed" ? "btn-success" : "btn-outline-success")">
+                Completed (@Model.Count(p => p.Status == ShoeShop.Repository.Entities.PullOutStatus.Completed))
+            </a>
+            <a asp-action="Index" asp-route-status="Rejected" class="btn @(currentStatus == "Rejected" ? "btn-danger" : "btn-outline-danger")">
+                Rejected (@Model.Count(p => p.Status == ShoeShop.Repository.Entities.PullOutStatus.Rejected))
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Pull-Outs Table -->
+<div class="card table-custom">
+    <div class="card-header" style="background-color: var(--primary-color); color: white;">
+        <h5 class="mb-0"><i class="fas fa-list"></i> Pull-Out Requests (@Model.Count)</h5>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.Any())
+        {
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Shoe</th>
+                        <th>Color</th>
+                        <th>Quantity</th>
+                        <th>Reason</th>
+                        <th>Requested By</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pullOut in Model)
+                    {
+                        var statusClass = pullOut.Status.ToString() switch
+                        {
+                            "Pending" => "bg-warning",
+                            "Approved" => "bg-info",
+                            "Completed" => "bg-success",
+                            "Rejected" => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+
+                        <tr>
+                            <td><strong>@pullOut.ShoeName</strong></td>
+                            <td>
+                                <span class="badge badge-custom" style="background-color: #6c757d; color: white;">
+                                    @pullOut.ColorName
+                                </span>
+                            </td>
+                            <td><span class="badge bg-secondary">@pullOut.Quantity</span></td>
+                            <td>
+                                <strong>@pullOut.Reason</strong>
+                                @if (!string.IsNullOrEmpty(pullOut.ReasonDetails))
+                                {
+                                    <br />
+                        
+                                    <small class="text-muted">@pullOut.ReasonDetails</small>
+                                }
+                            </td>
+                            <td>@pullOut.RequestedBy</td>
+                            <td>@pullOut.PullOutDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <span class="badge @statusClass">@pullOut.StatusDisplay</span>
+                            </td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@pullOut.Id" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="p-5 text-center text-muted">
+                <i class="fas fa-inbox fa-3x mb-3"></i>
+                <p>No pull-out requests found</p>
+                <a asp-action="Create" class="btn btn-primary btn-custom">
+                    <i class="fas fa-plus"></i> Create Your First Request
+                </a>
+            </div>
+        }
+    </div>
+</div>

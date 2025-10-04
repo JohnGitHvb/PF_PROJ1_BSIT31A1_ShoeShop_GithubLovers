@@ -1,0 +1,93 @@
+﻿@model ShoeShop.Services.DTOs.SupplierDto
+@{
+    ViewData["Title"] = "Supplier Details";
+}
+
+<div class="page-header">
+    <h2><i class="fas fa-info-circle"></i> Supplier Details</h2>
+    <p>View supplier information</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                <h5 class="mb-0">@Model.Name</h5>
+            </div>
+            <div class="card-body p-4">
+                <dl class="row">
+                    <dt class="col-sm-3">Supplier ID:</dt>
+                    <dd class="col-sm-9">@Model.Id</dd>
+
+                    <dt class="col-sm-3">Name:</dt>
+                    <dd class="col-sm-9"><strong>@Model.Name</strong></dd>
+
+                    <dt class="col-sm-3">Email:</dt>
+                    <dd class="col-sm-9">
+                        <a href="mailto:@Model.ContactEmail">
+                            <i class="fas fa-envelope"></i> @Model.ContactEmail
+                        </a>
+                    </dd>
+
+                    <dt class="col-sm-3">Phone:</dt>
+                    <dd class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.ContactPhone))
+                        {
+                            <a href="tel:@Model.ContactPhone">
+                                <i class="fas fa-phone"></i> @Model.ContactPhone
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Not provided</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Address:</dt>
+                    <dd class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Address))
+                        {
+                            @Model.Address
+                        }
+                        else
+                        {
+                            <span class="text-muted">Not provided</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Status:</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge bg-success">
+                                <i class="fas fa-check"></i> Active
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-ban"></i> Inactive
+                            </span>
+                        }
+                    </dd>
+                </dl>
+
+                <hr />
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-custom me-2">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a asp-controller="PurchaseOrder" asp-action="Create" asp-route-supplierId="@Model.Id" class="btn btn-primary btn-custom">
+                            <i class="fas fa-shopping-cart"></i> Create Purchase Order
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,27 +1,90 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using ShoeShop.Services.DTOs.Shoes;
-using ShoeShop.Services.DTOs.Reports;
+﻿using Microsoft.EntityFrameworkCore;
+using ShoeShop.Repository;
+using ShoeShop.Repository.Entities;
+using ShoeShop.Services.DTOs;
 using ShoeShop.Services.Interfaces;
-using ShoeShop;
-using ShoeShop.Data;
-using ShoeShop.Entities;
 
 namespace ShoeShop.Services.Services
 {
     public class InventoryService : IInventoryService
     {
-        private readonly ShoeShopDbContext _db;
-        public InventoryService(ShoeShopDbContext db) => _db = db;
+        private readonly ShoeShopDbContext _context;
+
+        public InventoryService(ShoeShopDbContext context)
+        {
+            _context = context;
+        }
+
+        // Shoe Management
+        public async Task<List<ShoeDto>> GetAllShoesAsync()
+        {
+            var shoes = await _context.Shoes
+                .Include(s => s.ColorVariations)
+                .Where(s => s.IsActive)
+                .ToListAsync();
+
+            return shoes.Select(s => new ShoeDto
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Brand = s.Brand,
+                Cost = s.Cost,
+                Price = s.Price,
+                Description = s.Description,
+                ImageUrl = s.ImageUrl,
+                IsActive = s.IsActive,
+                CreatedDate = s.CreatedDate,
+                ColorVariations = s.ColorVariations.Select(cv => new ShoeColorVariationDto
+                {
+                    Id = cv.Id,
+                    ShoeId = cv.ShoeId,
+                    ShoeName = s.Name,
+                    Brand = s.Brand,
+                    ColorName = cv.ColorName,
+                    HexCode = cv.HexCode,
+                    StockQuantity = cv.StockQuantity,
+                    ReorderLevel = cv.ReorderLevel,
+                    IsActive = cv.IsActive
+                }).ToList()
+            }).ToList();
+        }
+
+        public async Task<ShoeDto?> GetShoeByIdAsync(int id)
+        {
+            var shoe = await _context.Shoes
+                .Include(s => s.ColorVariations)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (shoe == null) return null;
+
+            return new ShoeDto
+            {
+                Id = shoe.Id,
+                Name = shoe.Name,
+                Brand = shoe.Brand,
+                Cost = shoe.Cost,
+                Price = shoe.Price,
+                Description = shoe.Description,
+                ImageUrl = shoe.ImageUrl,
+                IsActive = shoe.IsActive,
+                CreatedDate = shoe.CreatedDate,
+                ColorVariations = shoe.ColorVariations.Select(cv => new ShoeColorVariationDto
+                {
+                    Id = cv.Id,
+                    ShoeId = cv.ShoeId,
+                    ShoeName = shoe.Name,
+                    Brand = shoe.Brand,
+                    ColorName = cv.ColorName,
+                    HexCode = cv.HexCode,
+                    StockQuantity = cv.StockQuantity,
+                    ReorderLevel = cv.ReorderLevel,
+                    IsActive = cv.IsActive
+                }).ToList()
+            };
+        }
 
         public async Task<ShoeDto> CreateShoeAsync(CreateShoeDto dto)
         {
-            if (dto.Price < dto.Cost)
-                throw new InvalidOperationException("Selling Price should not be less than Cost.");
-
             var shoe = new Shoe
             {
                 Name = dto.Name,
@@ -30,12 +93,12 @@ namespace ShoeShop.Services.Services
                 Price = dto.Price,
                 Description = dto.Description,
                 ImageUrl = dto.ImageUrl,
-                IsActive = dto.IsActive,
-                CreatedDate = DateTime.UtcNow
+                IsActive = true,
+                CreatedDate = DateTime.Now
             };
 
-            _db.Shoes.Add(shoe);
-            await _db.SaveChangesAsync();
+            _context.Shoes.Add(shoe);
+            await _context.SaveChangesAsync();
 
             return new ShoeDto
             {
@@ -51,88 +114,235 @@ namespace ShoeShop.Services.Services
             };
         }
 
-        public async Task<ShoeDto> GetShoeAsync(int id)
+        public async Task<ShoeDto> UpdateShoeAsync(int id, CreateShoeDto dto)
         {
-            var s = await _db.Shoes.FindAsync(id);
-            if (s == null) return null;
+            var shoe = await _context.Shoes.FindAsync(id);
+            if (shoe == null)
+                throw new Exception($"Shoe with ID {id} not found");
+
+            shoe.Name = dto.Name;
+            shoe.Brand = dto.Brand;
+            shoe.Cost = dto.Cost;
+            shoe.Price = dto.Price;
+            shoe.Description = dto.Description;
+            shoe.ImageUrl = dto.ImageUrl;
+
+            await _context.SaveChangesAsync();
+
             return new ShoeDto
             {
-                Id = s.Id,
-                Name = s.Name,
-                Brand = s.Brand,
-                Cost = s.Cost,
-                Price = s.Price,
-                Description = s.Description,
-                ImageUrl = s.ImageUrl,
-                IsActive = s.IsActive,
-                CreatedDate = s.CreatedDate
+                Id = shoe.Id,
+                Name = shoe.Name,
+                Brand = shoe.Brand,
+                Cost = shoe.Cost,
+                Price = shoe.Price,
+                Description = shoe.Description,
+                ImageUrl = shoe.ImageUrl,
+                IsActive = shoe.IsActive,
+                CreatedDate = shoe.CreatedDate
             };
         }
 
-        public async Task<IEnumerable<ShoeDto>> GetAllShoesAsync()
+        public async Task<bool> DeleteShoeAsync(int id)
         {
-            return await _db.Shoes
-                .OrderBy(s => s.Name)
-                .Select(s => new ShoeDto {
-                    Id = s.Id, Name = s.Name, Brand = s.Brand, Cost = s.Cost,
-                    Price = s.Price, Description = s.Description, ImageUrl = s.ImageUrl,
-                    IsActive = s.IsActive, CreatedDate = s.CreatedDate
-                })
+            var shoe = await _context.Shoes.FindAsync(id);
+            if (shoe == null) return false;
+
+            shoe.IsActive = false;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        // Color Variation Management
+        public async Task<List<ShoeColorVariationDto>> GetAllColorVariationsAsync()
+        {
+            var variations = await _context.ShoeColorVariations
+                .Include(cv => cv.Shoe)
+                .Where(cv => cv.IsActive)
                 .ToListAsync();
-        }
 
-        public async Task AddStockAsync(int shoeColorVariationId, int quantity, string note = null)
-        {
-            if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
-            var v = await _db.ShoeColorVariations.FindAsync(shoeColorVariationId);
-            if (v == null) throw new KeyNotFoundException("Variation not found.");
-            v.StockQuantity += quantity;
-            _db.ShoeColorVariations.Update(v);
-            await _db.SaveChangesAsync();
-        }
-
-        public async Task RemoveStockAsync(int shoeColorVariationId, int quantity, string note = null)
-        {
-            if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
-            var v = await _db.ShoeColorVariations.FindAsync(shoeColorVariationId);
-            if (v == null) throw new KeyNotFoundException("Variation not found.");
-            if (v.StockQuantity < quantity) throw new InvalidOperationException("Insufficient stock.");
-            v.StockQuantity -= quantity;
-            _db.ShoeColorVariations.Update(v);
-            await _db.SaveChangesAsync();
-        }
-
-        public async Task<IEnumerable<ShoeColorVariationLowStockDto>> GetLowStockAsync(int threshold = 5)
-        {
-            return await _db.ShoeColorVariations
-                .Where(v => v.IsActive && v.StockQuantity <= (v.ReorderLevel == 0 ? threshold : v.ReorderLevel))
-                .Include(v => v.Shoe)
-                .Select(v => new ShoeColorVariationLowStockDto
-                {
-                    ShoeColorVariationId = v.Id,
-                    ShoeName = v.Shoe.Name,
-                    ColorName = v.ColorName,
-                    StockQuantity = v.StockQuantity,
-                    ReorderLevel = v.ReorderLevel
-                })
-                .ToListAsync();
-        }
-
-        public async Task<InventoryReportDto> GetInventoryReportAsync()
-        {
-            var variations = await _db.ShoeColorVariations.Include(v => v.Shoe).ToListAsync();
-            var totalSku = variations.Count;
-            var totalUnits = variations.Sum(v => v.StockQuantity);
-            var totalValue = variations.Sum(v => v.StockQuantity * v.Shoe.Cost);
-            var lowStockCount = variations.Count(v => v.StockQuantity <= v.ReorderLevel);
-
-            return new InventoryReportDto
+            return variations.Select(cv => new ShoeColorVariationDto
             {
-                TotalSkuCount = totalSku,
-                TotalUnitsInStock = totalUnits,
-                TotalInventoryValue = totalValue,
-                LowStockCount = lowStockCount
+                Id = cv.Id,
+                ShoeId = cv.ShoeId,
+                ShoeName = cv.Shoe.Name,
+                Brand = cv.Shoe.Brand,
+                ColorName = cv.ColorName,
+                HexCode = cv.HexCode,
+                StockQuantity = cv.StockQuantity,
+                ReorderLevel = cv.ReorderLevel,
+                IsActive = cv.IsActive
+            }).ToList();
+        }
+
+        public async Task<List<ShoeColorVariationDto>> GetColorVariationsByShoeIdAsync(int shoeId)
+        {
+            var variations = await _context.ShoeColorVariations
+                .Include(cv => cv.Shoe)
+                .Where(cv => cv.ShoeId == shoeId && cv.IsActive)
+                .ToListAsync();
+
+            return variations.Select(cv => new ShoeColorVariationDto
+            {
+                Id = cv.Id,
+                ShoeId = cv.ShoeId,
+                ShoeName = cv.Shoe.Name,
+                Brand = cv.Shoe.Brand,
+                ColorName = cv.ColorName,
+                HexCode = cv.HexCode,
+                StockQuantity = cv.StockQuantity,
+                ReorderLevel = cv.ReorderLevel,
+                IsActive = cv.IsActive
+            }).ToList();
+        }
+
+        public async Task<ShoeColorVariationDto?> GetColorVariationByIdAsync(int id)
+        {
+            var variation = await _context.ShoeColorVariations
+                .Include(cv => cv.Shoe)
+                .FirstOrDefaultAsync(cv => cv.Id == id);
+
+            if (variation == null) return null;
+
+            return new ShoeColorVariationDto
+            {
+                Id = variation.Id,
+                ShoeId = variation.ShoeId,
+                ShoeName = variation.Shoe.Name,
+                Brand = variation.Shoe.Brand,
+                ColorName = variation.ColorName,
+                HexCode = variation.HexCode,
+                StockQuantity = variation.StockQuantity,
+                ReorderLevel = variation.ReorderLevel,
+                IsActive = variation.IsActive
             };
+        }
+
+        public async Task<ShoeColorVariationDto> CreateColorVariationAsync(CreateShoeColorVariationDto dto)
+        {
+            var shoe = await _context.Shoes.FindAsync(dto.ShoeId);
+            if (shoe == null)
+                throw new Exception($"Shoe with ID {dto.ShoeId} not found");
+
+            var variation = new ShoeColorVariation
+            {
+                ShoeId = dto.ShoeId,
+                ColorName = dto.ColorName,
+                HexCode = dto.HexCode,
+                StockQuantity = dto.StockQuantity,
+                ReorderLevel = dto.ReorderLevel,
+                IsActive = true
+            };
+
+            _context.ShoeColorVariations.Add(variation);
+            await _context.SaveChangesAsync();
+
+            return new ShoeColorVariationDto
+            {
+                Id = variation.Id,
+                ShoeId = variation.ShoeId,
+                ShoeName = shoe.Name,
+                Brand = shoe.Brand,
+                ColorName = variation.ColorName,
+                HexCode = variation.HexCode,
+                StockQuantity = variation.StockQuantity,
+                ReorderLevel = variation.ReorderLevel,
+                IsActive = variation.IsActive
+            };
+        }
+
+        public async Task<ShoeColorVariationDto> UpdateColorVariationAsync(int id, CreateShoeColorVariationDto dto)
+        {
+            var variation = await _context.ShoeColorVariations
+                .Include(cv => cv.Shoe)
+                .FirstOrDefaultAsync(cv => cv.Id == id);
+
+            if (variation == null)
+                throw new Exception($"Color variation with ID {id} not found");
+
+            variation.ShoeId = dto.ShoeId;
+            variation.ColorName = dto.ColorName;
+            variation.HexCode = dto.HexCode;
+            variation.StockQuantity = dto.StockQuantity;
+            variation.ReorderLevel = dto.ReorderLevel;
+
+            await _context.SaveChangesAsync();
+
+            return new ShoeColorVariationDto
+            {
+                Id = variation.Id,
+                ShoeId = variation.ShoeId,
+                ShoeName = variation.Shoe.Name,
+                Brand = variation.Shoe.Brand,
+                ColorName = variation.ColorName,
+                HexCode = variation.HexCode,
+                StockQuantity = variation.StockQuantity,
+                ReorderLevel = variation.ReorderLevel,
+                IsActive = variation.IsActive
+            };
+        }
+
+        public async Task<bool> DeleteColorVariationAsync(int id)
+        {
+            var variation = await _context.ShoeColorVariations.FindAsync(id);
+            if (variation == null) return false;
+
+            variation.IsActive = false;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        // Stock Management
+        public async Task<bool> AdjustStockAsync(int colorVariationId, int quantity, string reason)
+        {
+            var variation = await _context.ShoeColorVariations.FindAsync(colorVariationId);
+            if (variation == null) return false;
+
+            variation.StockQuantity += quantity;
+
+            if (variation.StockQuantity < 0)
+                throw new Exception("Stock quantity cannot be negative");
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<ShoeColorVariationDto>> GetLowStockItemsAsync()
+        {
+            var variations = await _context.ShoeColorVariations
+                .Include(cv => cv.Shoe)
+                .Where(cv => cv.IsActive && cv.StockQuantity <= cv.ReorderLevel)
+                .ToListAsync();
+
+            return variations.Select(cv => new ShoeColorVariationDto
+            {
+                Id = cv.Id,
+                ShoeId = cv.ShoeId,
+                ShoeName = cv.Shoe.Name,
+                Brand = cv.Shoe.Brand,
+                ColorName = cv.ColorName,
+                HexCode = cv.HexCode,
+                StockQuantity = cv.StockQuantity,
+                ReorderLevel = cv.ReorderLevel,
+                IsActive = cv.IsActive
+            }).ToList();
+        }
+
+        public async Task<int> GetTotalStockCountAsync()
+        {
+            return await _context.ShoeColorVariations
+                .Where(cv => cv.IsActive)
+                .SumAsync(cv => cv.StockQuantity);
+        }
+
+        public async Task<decimal> GetTotalInventoryValueAsync()
+        {
+            var total = await _context.ShoeColorVariations
+                .Include(cv => cv.Shoe)
+                .Where(cv => cv.IsActive)
+                .SumAsync(cv => cv.StockQuantity * cv.Shoe.Cost);
+
+            return total;
         }
     }
 }
