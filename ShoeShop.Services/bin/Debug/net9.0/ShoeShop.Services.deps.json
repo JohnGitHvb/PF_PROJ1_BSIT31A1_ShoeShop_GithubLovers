@@ -9,7 +9,7 @@
       "ShoeShop.Services/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "9.0.9",
-          "ShoeShop": "1.0.0"
+          "ShoeShop.Repository": "1.0.0"
         },
         "runtime": {
           "ShoeShop.Services.dll": {}
@@ -346,12 +346,12 @@
       },
       "System.Memory/4.5.3": {},
       "System.Text.Json/9.0.9": {},
-      "ShoeShop/1.0.0": {
+      "ShoeShop.Repository/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Sqlite": "9.0.9"
         },
         "runtime": {
-          "ShoeShop.dll": {
+          "ShoeShop.Repository.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -526,7 +526,7 @@
       "path": "system.text.json/9.0.9",
       "hashPath": "system.text.json.9.0.9.nupkg.sha512"
     },
-    "ShoeShop/1.0.0": {
+    "ShoeShop.Repository/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

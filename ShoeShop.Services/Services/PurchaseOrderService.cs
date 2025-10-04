@@ -1,157 +1,231 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using ShoeShop.Services.DTOs.PurchaseOrders;
+﻿using Microsoft.EntityFrameworkCore;
+using ShoeShop.Repository;
+using ShoeShop.Repository.Entities;
+using ShoeShop.Services.DTOs;
 using ShoeShop.Services.Interfaces;
-using ShoeShop.Services.Enums;
-using ShoeShop;
-using ShoeShop.Data;
-using ShoeShop.Entities;
 
 namespace ShoeShop.Services.Services
 {
     public class PurchaseOrderService : IPurchaseOrderService
     {
-        private readonly ShoeShopDbContext _db;
-        private readonly IInventoryService _inventory;
-        public PurchaseOrderService(ShoeShopDbContext db, IInventoryService inventory)
+        private readonly ShoeShopDbContext _context;
+
+        public PurchaseOrderService(ShoeShopDbContext context)
         {
-            _db = db;
-            _inventory = inventory;
+            _context = context;
+        }
+
+        public async Task<List<PurchaseOrderDto>> GetAllPurchaseOrdersAsync()
+        {
+            var orders = await _context.PurchaseOrders
+                .Include(po => po.Supplier)
+                .Include(po => po.OrderItems)
+                    .ThenInclude(oi => oi.ShoeColorVariation)
+                        .ThenInclude(cv => cv.Shoe)
+                .OrderByDescending(po => po.OrderDate)
+                .ToListAsync();
+
+            return orders.Select(MapToDto).ToList();
+        }
+
+        public async Task<List<PurchaseOrderDto>> GetPurchaseOrdersByStatusAsync(OrderStatus status)
+        {
+            var orders = await _context.PurchaseOrders
+                .Include(po => po.Supplier)
+                .Include(po => po.OrderItems)
+                    .ThenInclude(oi => oi.ShoeColorVariation)
+                        .ThenInclude(cv => cv.Shoe)
+                .Where(po => po.Status == status)
+                .OrderByDescending(po => po.OrderDate)
+                .ToListAsync();
+
+            return orders.Select(MapToDto).ToList();
+        }
+
+        public async Task<PurchaseOrderDto?> GetPurchaseOrderByIdAsync(int id)
+        {
+            var order = await _context.PurchaseOrders
+                .Include(po => po.Supplier)
+                .Include(po => po.OrderItems)
+                    .ThenInclude(oi => oi.ShoeColorVariation)
+                        .ThenInclude(cv => cv.Shoe)
+                .FirstOrDefaultAsync(po => po.Id == id);
+
+            return order == null ? null : MapToDto(order);
         }
 
         public async Task<PurchaseOrderDto> CreatePurchaseOrderAsync(CreatePurchaseOrderDto dto)
         {
-            if (dto.Items == null || !dto.Items.Any())
-                throw new ArgumentException("Purchase order must contain items.");
+            // Validate supplier exists
+            var supplier = await _context.Suppliers.FindAsync(dto.SupplierId);
+            if (supplier == null)
+                throw new Exception($"Supplier with ID {dto.SupplierId} not found");
 
-            var supplier = await _db.Suppliers.FindAsync(dto.SupplierId);
-            if (supplier == null) throw new KeyNotFoundException("Supplier not found.");
+            // Generate order number
+            var orderNumber = await GenerateOrderNumberAsync();
 
-            var po = new PurchaseOrder
+            // Calculate total amount
+            decimal totalAmount = dto.OrderItems.Sum(item => item.QuantityOrdered * item.UnitCost);
+
+            var purchaseOrder = new PurchaseOrder
             {
-                OrderNumber = dto.OrderNumber,
+                OrderNumber = orderNumber,
                 SupplierId = dto.SupplierId,
-                OrderDate = dto.OrderDate,
-                ExpectedDate = (DateTime)dto.ExpectedDate,
-                Status = Entities.PurchaseOrderStatus.Pending,
-                TotalAmount = dto.Items.Sum(i => i.QuantityOrdered * i.UnitCost)
+                OrderDate = DateTime.Now,
+                ExpectedDate = dto.ExpectedDate,
+                Status = OrderStatus.Pending,
+                TotalAmount = totalAmount
             };
-            _db.PurchaseOrders.Add(po);
-            await _db.SaveChangesAsync();
 
-            foreach (var it in dto.Items)
+            _context.PurchaseOrders.Add(purchaseOrder);
+            await _context.SaveChangesAsync();
+
+            // Add order items
+            foreach (var itemDto in dto.OrderItems)
             {
-                var variation = await _db.ShoeColorVariations.FindAsync(it.ShoeColorVariationId);
-                if (variation == null) throw new KeyNotFoundException($"Variation {it.ShoeColorVariationId} not found.");
-
-                var poi = new PurchaseOrderItem
+                var orderItem = new PurchaseOrderItem
                 {
-                    PurchaseOrderId = po.Id,
-                    ShoeColorVariationId = it.ShoeColorVariationId,
-                    QuantityOrdered = it.QuantityOrdered,
+                    PurchaseOrderId = purchaseOrder.Id,
+                    ShoeColorVariationId = itemDto.ShoeColorVariationId,
+                    QuantityOrdered = itemDto.QuantityOrdered,
                     QuantityReceived = 0,
-                    UnitCost = it.UnitCost
+                    UnitCost = itemDto.UnitCost
                 };
-                _db.PurchaseOrderItems.Add(poi);
+
+                _context.PurchaseOrderItems.Add(orderItem);
             }
 
-            await _db.SaveChangesAsync();
-            return await GetPurchaseOrderAsync(po.Id);
+            await _context.SaveChangesAsync();
+
+            // Reload with all includes
+            return (await GetPurchaseOrderByIdAsync(purchaseOrder.Id))!;
         }
 
-        public async Task<PurchaseOrderDto> GetPurchaseOrderAsync(int id)
+        public async Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status)
         {
-            var po = await _db.PurchaseOrders
-                .Include(p => p.Supplier)
-                .Include(p => p.Items).ThenInclude(i => i.ShoeColorVariation).ThenInclude(v => v.Shoe)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var order = await _context.PurchaseOrders.FindAsync(orderId);
+            if (order == null) return false;
 
-            if (po == null) return null;
+            order.Status = status;
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
-            var dto = new PurchaseOrderDto
+        public async Task<bool> CancelOrderAsync(int orderId)
+        {
+            var order = await _context.PurchaseOrders.FindAsync(orderId);
+            if (order == null) return false;
+
+            if (order.Status == OrderStatus.Received)
+                throw new Exception("Cannot cancel an order that has already been received");
+
+            order.Status = OrderStatus.Cancelled;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> ReceiveOrderAsync(int orderId)
+        {
+            var order = await _context.PurchaseOrders
+                .Include(po => po.OrderItems)
+                    .ThenInclude(oi => oi.ShoeColorVariation)
+                .FirstOrDefaultAsync(po => po.Id == orderId);
+
+            if (order == null) return false;
+
+            if (order.Status == OrderStatus.Received)
+                throw new Exception("Order has already been received");
+
+            // Update stock for all items
+            foreach (var item in order.OrderItems)
             {
-                Id = po.Id,
-                OrderNumber = po.OrderNumber,
-                SupplierId = po.SupplierId,
-                SupplierName = po.Supplier?.Name,
-                OrderDate = po.OrderDate,
-                ExpectedDate = po.ExpectedDate,
-                Status = (Enums.PurchaseOrderStatus)po.Status,
-                TotalAmount = po.TotalAmount
+                item.QuantityReceived = item.QuantityOrdered;
+                item.ShoeColorVariation.StockQuantity += item.QuantityOrdered;
+            }
+
+            order.Status = OrderStatus.Received;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> ReceiveOrderItemAsync(int orderItemId, int quantityReceived)
+        {
+            var orderItem = await _context.PurchaseOrderItems
+                .Include(oi => oi.ShoeColorVariation)
+                .Include(oi => oi.PurchaseOrder)
+                .FirstOrDefaultAsync(oi => oi.Id == orderItemId);
+
+            if (orderItem == null) return false;
+
+            if (quantityReceived > orderItem.QuantityOrdered)
+                throw new Exception("Received quantity cannot exceed ordered quantity");
+
+            // Update stock
+            var additionalQuantity = quantityReceived - orderItem.QuantityReceived;
+            orderItem.ShoeColorVariation.StockQuantity += additionalQuantity;
+            orderItem.QuantityReceived = quantityReceived;
+
+            // Check if all items are fully received
+            var allItemsReceived = await _context.PurchaseOrderItems
+                .Where(oi => oi.PurchaseOrderId == orderItem.PurchaseOrderId)
+                .AllAsync(oi => oi.QuantityReceived == oi.QuantityOrdered);
+
+            if (allItemsReceived)
+            {
+                orderItem.PurchaseOrder.Status = OrderStatus.Received;
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<decimal> GetTotalPurchaseAmountAsync()
+        {
+            return await _context.PurchaseOrders
+                .Where(po => po.Status == OrderStatus.Received)
+                .SumAsync(po => po.TotalAmount);
+        }
+
+        public async Task<int> GetPendingOrdersCountAsync()
+        {
+            return await _context.PurchaseOrders
+                .CountAsync(po => po.Status == OrderStatus.Pending);
+        }
+
+        // Helper methods
+        private async Task<string> GenerateOrderNumberAsync()
+        {
+            var year = DateTime.Now.Year;
+            var count = await _context.PurchaseOrders
+                .CountAsync(po => po.OrderDate.Year == year);
+
+            return $"PO-{year}-{(count + 1):D4}";
+        }
+
+        private PurchaseOrderDto MapToDto(PurchaseOrder order)
+        {
+            return new PurchaseOrderDto
+            {
+                Id = order.Id,
+                OrderNumber = order.OrderNumber,
+                SupplierId = order.SupplierId,
+                SupplierName = order.Supplier.Name,
+                OrderDate = order.OrderDate,
+                ExpectedDate = order.ExpectedDate,
+                Status = order.Status,
+                TotalAmount = order.TotalAmount,
+                OrderItems = order.OrderItems.Select(oi => new PurchaseOrderItemDto
+                {
+                    Id = oi.Id,
+                    PurchaseOrderId = oi.PurchaseOrderId,
+                    ShoeColorVariationId = oi.ShoeColorVariationId,
+                    ShoeName = oi.ShoeColorVariation.Shoe.Name,
+                    ColorName = oi.ShoeColorVariation.ColorName,
+                    QuantityOrdered = oi.QuantityOrdered,
+                    QuantityReceived = oi.QuantityReceived,
+                    UnitCost = oi.UnitCost
+                }).ToList()
             };
-
-            dto.Items = po.Items.Select(i => new PurchaseOrderItemDto
-            {
-                Id = i.Id,
-                ShoeColorVariationId = i.ShoeColorVariationId,
-                ColorName = i.ShoeColorVariation?.ColorName,
-                QuantityOrdered = i.QuantityOrdered,
-                QuantityReceived = i.QuantityReceived,
-                UnitCost = i.UnitCost
-            }).ToList();
-
-            return dto;
-        }
-
-        public async Task ReceivePurchaseOrderItemAsync(int purchaseOrderItemId, int quantityReceived, Entities.PurchaseOrderStatus purchaseOrderStatus)
-        {
-            if (quantityReceived <= 0) throw new ArgumentException("Quantity must be positive.");
-
-            var item = await _db.PurchaseOrderItems
-                .Include(i => i.PurchaseOrder)
-                .FirstOrDefaultAsync(i => i.Id == purchaseOrderItemId);
-            if (item == null) throw new KeyNotFoundException("Purchase order item not found.");
-
-            var remaining = item.QuantityOrdered - item.QuantityReceived;
-            if (quantityReceived > remaining)
-                throw new InvalidOperationException("Quantity received exceeds quantity ordered.");
-
-            item.QuantityReceived += quantityReceived;
-            _db.PurchaseOrderItems.Update(item);
-
-            await _inventory.AddStockAsync(item.ShoeColorVariationId, quantityReceived, $"Received from PO {item.PurchaseOrder.OrderNumber}");
-
-            var po = await _db.PurchaseOrders.Include(p => p.Items).FirstOrDefaultAsync(p => p.Id == item.PurchaseOrderId);
-            if (po.Items.All(i => i.QuantityReceived >= i.QuantityOrdered))
-                po.Status = Entities.PurchaseOrderStatus.Received;
-            else
-                po.Status = Entities.PurchaseOrderStatus.Shipped;
-
-            _db.PurchaseOrders.Update(po);
-            await _db.SaveChangesAsync();
-        }
-
-        public async Task ConfirmPurchaseOrderAsync(int purchaseOrderId)
-        {
-            var po = await _db.PurchaseOrders.FindAsync(purchaseOrderId);
-            if (po == null) throw new KeyNotFoundException("Purchase order not found.");
-            if (po.Status != Entities.PurchaseOrderStatus.Pending) throw new InvalidOperationException("Only pending orders can be confirmed.");
-
-            po.Status = Entities.PurchaseOrderStatus.Confirmed;
-            _db.PurchaseOrders.Update(po);
-            await _db.SaveChangesAsync();
-        }
-
-        Task<PurchaseOrderDto> IPurchaseOrderService.CreatePurchaseOrderAsync(CreatePurchaseOrderDto dto)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<PurchaseOrderDto> IPurchaseOrderService.GetPurchaseOrderAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task IPurchaseOrderService.ReceivePurchaseOrderItemAsync(int purchaseOrderItemId, int quantityReceived)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task IPurchaseOrderService.ConfirmPurchaseOrderAsync(int purchaseOrderId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

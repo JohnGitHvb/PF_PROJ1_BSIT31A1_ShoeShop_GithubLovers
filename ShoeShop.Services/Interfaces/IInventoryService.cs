@@ -1,27 +1,28 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using ShoeShop.Services.DTOs.Shoes;
-using ShoeShop.Services.DTOs.Reports;
+﻿using ShoeShop.Services.DTOs;
 
 namespace ShoeShop.Services.Interfaces
 {
-    public class ShoeColorVariationLowStockDto
-    {
-        public int ShoeColorVariationId { get; set; }
-        public string ShoeName { get; set; }
-        public string ColorName { get; set; }
-        public int StockQuantity { get; set; }
-        public int ReorderLevel { get; set; }
-    }
-
     public interface IInventoryService
     {
+        // Shoe Management
+        Task<List<ShoeDto>> GetAllShoesAsync();
+        Task<ShoeDto?> GetShoeByIdAsync(int id);
         Task<ShoeDto> CreateShoeAsync(CreateShoeDto dto);
-        Task<ShoeDto> GetShoeAsync(int id);
-        Task<IEnumerable<ShoeDto>> GetAllShoesAsync();
-        Task AddStockAsync(int shoeColorVariationId, int quantity, string note = null);
-        Task RemoveStockAsync(int shoeColorVariationId, int quantity, string note = null);
-        Task<IEnumerable<ShoeColorVariationLowStockDto>> GetLowStockAsync(int threshold = 5);
-        Task<InventoryReportDto> GetInventoryReportAsync();
+        Task<ShoeDto> UpdateShoeAsync(int id, CreateShoeDto dto);
+        Task<bool> DeleteShoeAsync(int id);
+
+        // Color Variation Management
+        Task<List<ShoeColorVariationDto>> GetAllColorVariationsAsync();
+        Task<List<ShoeColorVariationDto>> GetColorVariationsByShoeIdAsync(int shoeId);
+        Task<ShoeColorVariationDto?> GetColorVariationByIdAsync(int id);
+        Task<ShoeColorVariationDto> CreateColorVariationAsync(CreateShoeColorVariationDto dto);
+        Task<ShoeColorVariationDto> UpdateColorVariationAsync(int id, CreateShoeColorVariationDto dto);
+        Task<bool> DeleteColorVariationAsync(int id);
+
+        // Stock Management
+        Task<bool> AdjustStockAsync(int colorVariationId, int quantity, string reason);
+        Task<List<ShoeColorVariationDto>> GetLowStockItemsAsync();
+        Task<int> GetTotalStockCountAsync();
+        Task<decimal> GetTotalInventoryValueAsync();
     }
 }

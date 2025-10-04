@@ -1,0 +1,194 @@
+﻿@model ShoeShop.Web.ViewModels.InventoryViewModel
+@{
+    ViewData["Title"] = "Inventory Management";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2><i class="fas fa-boxes"></i> Inventory Management</h2>
+        <p>Manage your shoe inventory and stock levels</p>
+    </div>
+    <div>
+        <a asp-action="CreateShoe" class="btn btn-primary btn-custom">
+            <i class="fas fa-plus"></i> Add New Shoe
+        </a>
+        <a asp-action="CreateColor" class="btn btn-success btn-custom">
+            <i class="fas fa-palette"></i> Add Color Variation
+        </a>
+    </div>
+</div>
+
+<!-- Success/Error Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Search</label>
+                <input type="text" name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search by name or brand..." />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Filter by Brand</label>
+                <select name="filterBrand" class="form-select">
+                    <option value="">All Brands</option>
+                    @foreach (var brand in Model.Shoes.Select(s => s.Brand).Distinct())
+                    {
+                        <option value="@brand" selected="@(Model.FilterBrand == brand)">@brand</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="showLowStockOnly" value="true" checked="@Model.ShowLowStockOnly" />
+                    <label class="form-check-label">Show Low Stock Only</label>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Filter
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Shoes List -->
+<div class="card table-custom mb-4">
+    <div class="card-header" style="background-color: var(--primary-color); color: white;">
+        <h5 class="mb-0"><i class="fas fa-shoe-prints"></i> Shoe Models (@Model.Shoes.Count)</h5>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Cost</th>
+                    <th>Price</th>
+                    <th>Colors</th>
+                    <th>Total Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var shoe in Model.Shoes)
+                {
+                    var totalStock = shoe.ColorVariations.Sum(cv => cv.StockQuantity);
+                    var hasLowStock = shoe.ColorVariations.Any(cv => cv.IsLowStock);
+                    <tr>
+                        <td>
+                            <strong>@shoe.Name</strong>
+                            @if (hasLowStock)
+                            {
+                                <span class="badge bg-danger ms-2">Low Stock</span>
+                            }
+                        </td>
+                        <td>@shoe.Brand</td>
+                        <td>$@shoe.Cost.ToString("N2")</td>
+                        <td>$@shoe.Price.ToString("N2")</td>
+                        <td>
+                            @foreach (var color in shoe.ColorVariations.Take(3))
+                            {
+                                <span class="badge badge-custom" style="background-color: @color.HexCode; color: white; margin-right: 5px;">
+                                    @color.ColorName
+                                </span>
+                            }
+                            @if (shoe.ColorVariations.Count > 3)
+                            {
+                                <span class="badge bg-secondary">+@(shoe.ColorVariations.Count - 3) more</span>
+                            }
+                        </td>
+                        <td>
+                            @if (hasLowStock)
+                            {
+                                <span class="badge bg-danger">@totalStock</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">@totalStock</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="EditShoe" asp-route-id="@shoe.Id" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="DeleteShoe" asp-route-id="@shoe.Id" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Color Variations List -->
+<div class="card table-custom">
+    <div class="card-header" style="background-color: var(--primary-color); color: white;">
+        <h5 class="mb-0"><i class="fas fa-palette"></i> Color Variations (@Model.ColorVariations.Count)</h5>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Shoe</th>
+                    <th>Brand</th>
+                    <th>Color</th>
+                    <th>Stock</th>
+                    <th>Reorder Level</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var variation in Model.ColorVariations)
+                {
+                    <tr class="@(variation.IsLowStock ? "table-danger" : "")">
+                        <td><strong>@variation.ShoeName</strong></td>
+                        <td>@variation.Brand</td>
+                        <td>
+                            <span class="badge badge-custom" style="background-color: @variation.HexCode; color: white;">
+                                @variation.ColorName
+                            </span>
+                        </td>
+                        <td>
+                            @if (variation.IsLowStock)
+                            {
+                                <span class="badge bg-danger">@variation.StockQuantity</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">@variation.StockQuantity</span>
+                            }
+                        </td>
+                        <td>@variation.ReorderLevel</td>
+                        <td>
+                            @if (variation.IsLowStock)
+                            {
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-exclamation-triangle"></i> Low Stock
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check"></i> In Stock
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -465,21 +465,18 @@
           "buildTransitive/net8.0/System.Text.Json.targets": {}
         }
       },
-      "ShoeShop/1.0.0": {
+      "ShoeShop.Repository/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Sqlite": "9.0.9"
         },
         "compile": {
-          "bin/placeholder/ShoeShop.dll": {}
+          "bin/placeholder/ShoeShop.Repository.dll": {}
         },
         "runtime": {
-          "bin/placeholder/ShoeShop.dll": {}
-        },
-        "frameworkReferences": [
-          "Microsoft.AspNetCore.App"
-        ]
+          "bin/placeholder/ShoeShop.Repository.dll": {}
+        }
       }
     }
   },
@@ -1122,36 +1119,36 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "ShoeShop/1.0.0": {
+    "ShoeShop.Repository/1.0.0": {
       "type": "project",
-      "path": "../ShoeShop/ShoeShop.csproj",
-      "msbuildProject": "../ShoeShop/ShoeShop.csproj"
+      "path": "../ShoeShop.Repository/ShoeShop.Repository.csproj",
+      "msbuildProject": "../ShoeShop.Repository/ShoeShop.Repository.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net9.0": [
       "Microsoft.EntityFrameworkCore >= 9.0.9",
-      "ShoeShop >= 1.0.0"
+      "ShoeShop.Repository >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rydner\\.nuget\\packages\\": {},
+    "C:\\Users\\Villadiego\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rydner\\Source\\Repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop.Services\\ShoeShop.Services.csproj",
+      "projectUniqueName": "E:\\Hans\\ShoeShop\\ShoeShop.Services\\ShoeShop.Services.csproj",
       "projectName": "ShoeShop.Services",
-      "projectPath": "C:\\Users\\rydner\\Source\\Repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop.Services\\ShoeShop.Services.csproj",
-      "packagesPath": "C:\\Users\\rydner\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rydner\\Source\\Repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop.Services\\obj\\",
+      "projectPath": "E:\\Hans\\ShoeShop\\ShoeShop.Services\\ShoeShop.Services.csproj",
+      "packagesPath": "C:\\Users\\Villadiego\\.nuget\\packages\\",
+      "outputPath": "E:\\Hans\\ShoeShop\\ShoeShop.Services\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\rydner\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Villadiego\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -1166,8 +1163,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\Users\\rydner\\Source\\Repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop.csproj": {
-              "projectPath": "C:\\Users\\rydner\\Source\\Repos\\PF_PROJ1_BSIT31A1_ShoeShop_GithubLovers\\ShoeShop\\ShoeShop.csproj"
+            "E:\\Hans\\ShoeShop\\ShoeShop.Repository\\ShoeShop.Repository.csproj": {
+              "projectPath": "E:\\Hans\\ShoeShop\\ShoeShop.Repository\\ShoeShop.Repository.csproj"
             }
           }
         }
